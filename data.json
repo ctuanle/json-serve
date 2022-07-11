@@ -1,4 +1,26 @@
 {
-  "name": "Cong Tuan LE",
-  "place": "The Moon 2.0"
+  "http-code": [
+    {
+      "code": 404,
+      "status": "Not found"
+    },
+    {
+      "code": 400,
+      "status": "Bad request"
+    },
+    {
+      "code": 401,
+      "status": "Unauthorized"
+    },
+    {
+      "code": 500,
+      "status": "Server error"
+    }
+  ],
+  "name": "Cong Tuan",
+  "repo": {
+    "host": "github.com",
+    "username": "ctuanle",
+    "name": "json-serve"
+  }
 }

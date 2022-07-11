@@ -9,3 +9,7 @@ dist
 
 # dummy data
 src/data
+
+# dev
+.vscode
+.devcontainer
