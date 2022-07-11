@@ -5,10 +5,14 @@
   "main": "dist/index.js",
   "author": "ctuanle",
   "license": "MIT",
+  "bin": {
+    "json-serve": "dist/index.js"
+  },
   "scripts": {
     "start": "node .",
     "build": "tsc",
     "build:watch": "tsc --watch",
+    "build:package": "yarn build && npm install -g",
     "dev": "nodemon",
     "prepare": "husky install"
   },
