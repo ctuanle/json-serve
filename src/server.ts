@@ -1,16 +1,19 @@
 import http from 'http';
 import fs from 'fs';
 
+import logger from './logger';
+
 export default function startServer(port: number, jsonPath: string) {
   const dataFile = fs.readFileSync(jsonPath, 'utf-8');
   const dataJson = JSON.parse(dataFile);
 
   const server = http.createServer((req: http.IncomingMessage, res: http.ServerResponse) => {
     const url = req.url ?? '';
-    console.log(req.method, url);
+    const method = req.method ?? '';
+    logger(method, url);
 
     res.writeHead(200, { 'Content-Type': 'application/json' });
-    if (req.method === 'GET') {
+    if (method === 'GET') {
       if (url === '/') {
         // use return to make sure no further code will be executed
         return res.end(JSON.stringify(dataJson, null, 2));
