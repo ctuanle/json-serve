@@ -2,9 +2,14 @@
   "name": "json-serve",
   "version": "1.0.0",
   "description": "Simple json server",
-  "main": "dist/index.js",
+  "keywords": [
+    "rest",
+    "api",
+    "json"
+  ],
   "author": "ctuanle",
   "license": "MIT",
+  "main": "dist/index.js",
   "bin": {
     "json-serve": "dist/index.js"
   },

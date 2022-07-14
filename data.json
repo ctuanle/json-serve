@@ -15,6 +15,10 @@
     {
       "code": 500,
       "status": "Server error"
+    },
+    {
+      "code": 200,
+      "status": "ok"
     }
   ],
   "name": "Cong Tuan",
