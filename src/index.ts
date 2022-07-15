@@ -1,4 +1,5 @@
 #! /usr/bin/env node
+import { checkFileExistence } from './reader';
 import startServer from './server';
 
 /* global process */
@@ -6,10 +7,15 @@ import startServer from './server';
 const [, , ...args] = process.argv;
 
 const jsonPath = args[0] || 'data.json';
+
 const port = Number(args[1]) || 3000;
 console.log(args);
 
 function main() {
+  if (!checkFileExistence(jsonPath)) {
+    console.log('Invalid path file!');
+    process.exit();
+  }
   startServer(port, jsonPath);
 }
 
