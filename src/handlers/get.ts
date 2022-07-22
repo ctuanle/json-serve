@@ -8,58 +8,56 @@ export default function getReqHandler(
 ) {
   const url = new URL(req.url ?? '', `http://${req.headers.host}`);
 
-  if (url.pathname === '/') {
-    // use return to make sure no further code will be executed
-    return sender(res, dataSrc);
+  const paths = url.pathname.split('/').slice(1);
+  if (paths.length > 0 && paths.at(-1) === '') {
+    paths.pop();
+  }
+  let pointer = dataSrc;
+
+  for (let i = 0; i < paths.length; i++) {
+    const path = paths[i];
+
+    if (Array.isArray(pointer)) {
+      return sender(res, { error: 'Invalid path.' }, 400);
+    } else if (typeof pointer === 'object') {
+      if (path in pointer) {
+        pointer = pointer[path];
+      } else {
+        return sender(res, { error: 'No resources matched given path.' }, 400);
+      }
+    } else {
+      return sender(res, { error: 'Invalid path!' }, 400);
+    }
   }
 
-  const resourcesKeys = url.pathname.split('/').slice(1);
-
-  if (resourcesKeys[0] in dataSrc) {
-    let resData = dataSrc[resourcesKeys[0]];
-
-    const finalKey = resourcesKeys.at(-1) ?? '';
-
-    // get data based on given pathname
-    for (let i = 1; i < resourcesKeys.length; i++) {
-      const key = resourcesKeys[i];
-      if (key in resData) {
-        resData = resData[key];
-      } else {
-        return sender(res, {
-          message: 'No matching data for this path',
-        });
-      }
-    }
-
-    const queryFields = Array.from(url.searchParams.keys());
-    // process search query if there is
-    if (queryFields.length > 0) {
-      if (Array.isArray(resData)) {
-        // filtering
-        resData = resData.filter((item) => {
-          let answer = true;
-          for (const field of queryFields) {
-            if (String(item[field]) !== url.searchParams.get(field)) {
-              answer = false;
-              break;
-            }
-            return answer;
+  const queryFields = Array.from(url.searchParams.keys());
+  // process search query if there is
+  if (queryFields.length > 0) {
+    if (Array.isArray(pointer)) {
+      // filtering
+      pointer = pointer.filter((item) => {
+        let answer = true;
+        for (const field of queryFields) {
+          if (String(item[field]) !== url.searchParams.get(field)) {
+            answer = false;
+            break;
           }
-        });
-      } else {
-        return sender(res, {
+          return answer;
+        }
+      });
+    } else {
+      return sender(
+        res,
+        {
           message: 'Query is not supported for this type of resources.',
-        });
-      }
+        },
+        400
+      );
     }
-    const toSend: { [key: string]: any } = {};
-    toSend[finalKey] = resData;
-    // send filtered data
-    return sender(res, toSend);
   }
-
+  // send filtered data
   return sender(res, {
-    message: 'No matching data',
+    path: url.pathname,
+    data: pointer,
   });
 }
