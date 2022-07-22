@@ -1,5 +1,5 @@
 #! /usr/bin/env node
-import { checkFileExistence } from './reader';
+import { checkFileExistence } from './utils/_fs';
 import startServer from './server';
 
 /* global process */

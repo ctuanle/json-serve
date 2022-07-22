@@ -1,7 +1,7 @@
 import http from 'http';
 // import fs from 'fs';
 
-import { readFile } from './reader';
+import { readFile } from './utils/_fs';
 import listener from './listener';
 
 export default function startServer(port: number, jsonPath: string) {
