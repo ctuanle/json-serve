@@ -2,6 +2,7 @@ import { IncomingMessage, ServerResponse } from 'http';
 import logger from './utils/logger';
 import getReqHandler from './handlers/get';
 import postReqHandler from './handlers/post';
+import deleteReqHandler from './handlers/delete';
 
 // function that return a request listener function
 export default function (dataSrc: { [key: string]: any }, jsonPath: string) {
@@ -9,7 +10,7 @@ export default function (dataSrc: { [key: string]: any }, jsonPath: string) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,POST,PUT,DELETE');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-    res.setHeader('Access-Control-Max-Age', '86400');
+    res.setHeader('Access-Control-Max-Age', '86400'); // one-day
 
     const method = req.method ?? '';
     logger(method, req.url ?? '');
@@ -21,6 +22,8 @@ export default function (dataSrc: { [key: string]: any }, jsonPath: string) {
       return getReqHandler(req, res, dataSrc);
     } else if (method === 'POST') {
       return postReqHandler(req, res, dataSrc, jsonPath);
+    } else if (method === 'DELETE') {
+      return deleteReqHandler(req, res, dataSrc, jsonPath);
     }
   };
 }
