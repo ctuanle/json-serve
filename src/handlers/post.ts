@@ -55,7 +55,7 @@ export default function postReqHandler(
       const bodyData = JSON.parse(Buffer.concat(chunks).toString());
 
       if (newEndPath) {
-        pointer[newEndPath] = bodyData;
+        pointer[newEndPath] = [bodyData];
       } else if (Array.isArray(pointer)) {
         pointer.push(bodyData);
       } else {
