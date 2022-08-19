@@ -25,11 +25,6 @@
   "repo": {
     "host": "github.com",
     "username": "ctuanle",
-    "name": "json-serve",
-    "a": {
-      "b": {
-        "c": "Tuan"
-      }
-    }
+    "name": "json-serve"
   }
 }

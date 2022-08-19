@@ -1,6 +1,6 @@
 ## JSON-Serve
 
-By serving a json file as a rest api server, you can create a testing api within a minute with JSON-Serve.
+By serving a json file as a rest api server, you can create a testing api within less than a minute with JSON-Serve.
 
 ### Note
 
@@ -8,9 +8,12 @@ Inspired by this awesome package [typicode/json-server](https://github.com/typic
 
 ### Usage
 
-Install locally and use it to server a json file on a specific port
+Install locally (i will publish this package on npm in the future) and use it to server a json file on a specific port.
+
+First, clone this repo and run these commands:
 
 ```shell
+yarn
 yarn install:local
 yarn json-serve [json-file] [port]
 ```
