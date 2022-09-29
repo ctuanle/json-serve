@@ -18,7 +18,13 @@ export default function getReqHandler(
     const path = paths[i];
 
     if (Array.isArray(pointer)) {
-      return sender(res, { error: 'Invalid path.' }, 400);
+      const expectedIndex = Number(path);
+
+      if (expectedIndex && pointer[expectedIndex]) {
+        pointer = pointer[expectedIndex];
+      } else {
+        return sender(res, { error: 'Invalid path.' }, 400);
+      }
     } else if (typeof pointer === 'object') {
       if (path in pointer) {
         pointer = pointer[path];
