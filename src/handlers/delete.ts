@@ -1,6 +1,7 @@
 import { IncomingMessage, ServerResponse } from 'http';
 import { writeFile } from '../utils/_fs';
 import sender from '../utils/sender';
+import { HTTP_CODE } from '../utils/http_code';
 
 export default function deleteReqHandler(
   req: IncomingMessage,
@@ -10,44 +11,44 @@ export default function deleteReqHandler(
 ) {
   const url = new URL(req.url ?? '', `http://${req.headers.host}`);
 
-  const paths = url.pathname.split('/').slice(1);
+  const keys = url.pathname.split('/').slice(1);
 
-  if (paths.length === 0) {
+  if (keys.length === 0) {
     return sender(
       res,
       {
         error:
           'You are try to delete all your data. If this is what you wanted, please do it manually.',
       },
-      404
+      HTTP_CODE.BadRequest
     );
   }
 
-  if (paths.length > 0 && paths.at(-1) === '') {
-    paths.pop();
+  if (keys.length > 0 && keys.at(-1) === '') {
+    keys.pop();
   }
 
   let pointer = dataSrc;
-  const keyToDel = paths.at(-1) ?? '';
+  const keyToDel = keys.at(-1) ?? '';
 
-  for (let i = 0; i < paths.length - 1; i++) {
-    const path = paths[i];
+  for (let i = 0; i < keys.length - 1; i++) {
+    const key = keys[i];
 
     if (Array.isArray(pointer)) {
-      return sender(res, { error: 'Invalid path.' }, 400);
+      return sender(res, { error: 'Invalid path.' }, HTTP_CODE.NotFound);
     } else if (typeof pointer === 'object') {
-      if (path in pointer) {
-        pointer = pointer[path];
+      if (key in pointer) {
+        pointer = pointer[key];
       } else {
-        return sender(res, { error: 'No resources matched given path.' }, 400);
+        return sender(res, { error: 'No resources matched given path.' }, HTTP_CODE.NotFound);
       }
     } else {
-      return sender(res, { error: 'Invalid path!' }, 400);
+      return sender(res, { error: 'Invalid path!' }, HTTP_CODE.NotFound);
     }
   }
 
   if (!(keyToDel in pointer)) {
-    return sender(res, { error: 'Invalid path.' }, 400);
+    return sender(res, { error: 'Invalid path.' }, HTTP_CODE.NotFound);
   }
 
   const queryFields = Array.from(url.searchParams.keys());
@@ -73,7 +74,7 @@ export default function deleteReqHandler(
         {
           message: 'Delete with query is only supported with array data.',
         },
-        400
+        HTTP_CODE.NotFound
       );
     }
   } else {
@@ -87,13 +88,17 @@ export default function deleteReqHandler(
       {
         error: 'Could not persist. Something went wrong!',
       },
-      400
+      HTTP_CODE.InternalServerError
     );
   }
 
   // send filtered data
-  return sender(res, {
-    path: url.pathname,
-    message: 'Resources deleted.',
-  });
+  return sender(
+    res,
+    {
+      path: url.pathname,
+      message: 'Resources deleted.',
+    },
+    HTTP_CODE.NoContent
+  );
 }

@@ -1,5 +1,6 @@
 import { IncomingMessage, ServerResponse } from 'http';
 import sender from '../utils/sender';
+import { HTTP_CODE } from '../utils/http_code';
 
 export default function getReqHandler(
   req: IncomingMessage,
@@ -8,31 +9,33 @@ export default function getReqHandler(
 ) {
   const url = new URL(req.url ?? '', `http://${req.headers.host}`);
 
-  const paths = url.pathname.split('/').slice(1);
-  if (paths.length > 0 && paths.at(-1) === '') {
-    paths.pop();
+  // /abc/data/ => keys ["abc", "data"]
+  const keys = url.pathname.split('/').slice(1);
+  if (keys.length > 0 && keys.at(-1) === '') {
+    keys.pop();
   }
   let pointer = dataSrc;
 
-  for (let i = 0; i < paths.length; i++) {
-    const path = paths[i];
+  // pointer to target key
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i];
 
     if (Array.isArray(pointer)) {
-      const expectedIndex = Number(path);
+      const expectedIndex = Number(key);
 
       if (expectedIndex && pointer[expectedIndex]) {
         pointer = pointer[expectedIndex];
       } else {
-        return sender(res, { error: 'Invalid path.' }, 400);
+        return sender(res, { error: 'Invalid path.' }, HTTP_CODE.NotFound);
       }
     } else if (typeof pointer === 'object') {
-      if (path in pointer) {
-        pointer = pointer[path];
+      if (key in pointer) {
+        pointer = pointer[key];
       } else {
-        return sender(res, { error: 'No resources matched given path.' }, 400);
+        return sender(res, { error: 'No resources matched given path.' }, HTTP_CODE.NotFound);
       }
     } else {
-      return sender(res, { error: 'Invalid path!' }, 400);
+      return sender(res, { error: 'Invalid path!' }, HTTP_CODE.NotFound);
     }
   }
 
@@ -57,7 +60,7 @@ export default function getReqHandler(
         {
           message: 'Query is not supported for this type of resources.',
         },
-        400
+        HTTP_CODE.NotFound
       );
     }
   }
