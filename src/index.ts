@@ -2,18 +2,15 @@
 import process from 'process';
 import { checkFileExistence } from './utils/_fs';
 import startServer from './server';
-
-const [, , ...args] = process.argv;
-
-const jsonPath = args[0] || 'data.json';
-const port = Number(args[1]) || 3000;
-const isNoStrict = args.includes('--no-strict');
-
-console.log(args);
+import argsExtractor from './utils/args_extractor';
 
 function main() {
+  const [, , ...args] = process.argv;
+  console.log(args);
+  const { port, jsonPath, isNoStrict } = argsExtractor(args);
+
   if (!checkFileExistence(jsonPath)) {
-    console.log('Invalid path file!');
+    console.log('Invalid path file or file doest not exist!');
     process.exit();
   }
   startServer({ port, jsonPath, isNoStrict });
