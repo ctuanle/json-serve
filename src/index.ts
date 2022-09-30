@@ -1,8 +1,7 @@
 #! /usr/bin/env node
+import process from 'process';
 import { checkFileExistence } from './utils/_fs';
 import startServer from './server';
-
-/* global process */
 
 const [, , ...args] = process.argv;
 
