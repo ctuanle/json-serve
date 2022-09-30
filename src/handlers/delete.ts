@@ -35,7 +35,13 @@ export default function deleteReqHandler(
     const key = keys[i];
 
     if (Array.isArray(pointer)) {
-      return sender(res, { error: 'Invalid path.' }, HTTP_CODE.NotFound);
+      const expectedIndex = Number(key);
+
+      if (expectedIndex && pointer[expectedIndex]) {
+        pointer = pointer[expectedIndex];
+      } else {
+        return sender(res, { error: 'Invalid path.' }, HTTP_CODE.NotFound);
+      }
     } else if (typeof pointer === 'object') {
       if (key in pointer) {
         pointer = pointer[key];

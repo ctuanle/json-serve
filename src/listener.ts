@@ -3,6 +3,7 @@ import logger from './utils/logger';
 import getReqHandler from './handlers/get';
 import postReqHandler from './handlers/post';
 import deleteReqHandler from './handlers/delete';
+import putReqHandler from './handlers/put';
 
 // function that return a request listener function
 export default function (dataSrc: { [key: string]: any }, jsonPath: string) {
@@ -24,6 +25,8 @@ export default function (dataSrc: { [key: string]: any }, jsonPath: string) {
       return postReqHandler(req, res, dataSrc, jsonPath);
     } else if (method === 'DELETE') {
       return deleteReqHandler(req, res, dataSrc, jsonPath);
+    } else if (method === 'PUT') {
+      return putReqHandler(req, res, dataSrc, jsonPath);
     }
   };
 }
