@@ -1,12 +1,20 @@
 import { IncomingMessage, ServerResponse } from 'http';
+
 import logger from './utils/logger';
 import getReqHandler from './handlers/get';
 import postReqHandler from './handlers/post';
 import deleteReqHandler from './handlers/delete';
 import putReqHandler from './handlers/put';
 
+export interface IListenerParams {
+  dataSrc: { [key: string]: any };
+  jsonPath: string;
+  isNoStrict: boolean;
+}
+
 // function that return a request listener function
-export default function (dataSrc: { [key: string]: any }, jsonPath: string) {
+export default function ({ dataSrc, jsonPath, isNoStrict }: IListenerParams) {
+  console.info(isNoStrict);
   return function (req: IncomingMessage, res: ServerResponse) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,POST,PUT,DELETE');

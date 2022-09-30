@@ -1,12 +1,17 @@
 import http from 'http';
-// import fs from 'fs';
 
 import { readFile } from './utils/_fs';
 import listener from './listener';
 
-export default function startServer(port: number, jsonPath: string) {
+export interface IServerParams {
+  port: number;
+  jsonPath: string;
+  isNoStrict: boolean;
+}
+
+export default function startServer({ port, jsonPath, isNoStrict }: IServerParams) {
   const dataJson = readFile(jsonPath);
-  const server = http.createServer(listener(dataJson, jsonPath));
+  const server = http.createServer(listener({ dataSrc: dataJson, jsonPath, isNoStrict }));
 
   server.listen(port, () => {
     console.log(`Serving ${jsonPath} on port ${port}`);
