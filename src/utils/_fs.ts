@@ -51,18 +51,18 @@ export async function createFile() {
         from: 'Mars',
       },
     },
-    planets: [
-      'Mercury',
-      'Venus',
-      'Earth',
-      'Mars',
-      'Jupiter',
-      'Saturn',
-      'Uranus',
-      'Neptune',
-      'Pluto',
-      'Centaurs',
-    ],
+    planets: {
+      1: 'Mercury',
+      2: 'Venus',
+      3: 'Earth',
+      4: 'Mars',
+      5: 'Jupiter',
+      6: 'Saturn',
+      7: 'Uranus',
+      8: 'Neptune',
+      9: 'Pluto',
+      10: 'Centaurs',
+    },
   };
 
   try {
