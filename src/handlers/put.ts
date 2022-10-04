@@ -1,7 +1,7 @@
 import { IncomingMessage, ServerResponse } from 'http';
-import { writeFile } from '../utils/_fs';
 import sender from '../utils/sender';
 import { HTTP_CODE } from '../utils/http_code';
+import { fWriteFile } from '../utils/file';
 
 export default function putReqHandler(
   req: IncomingMessage,
@@ -55,7 +55,7 @@ export default function putReqHandler(
     .on('data', (chunk) => {
       chunks.push(chunk);
     })
-    .on('end', () => {
+    .on('end', async () => {
       if (chunks.length === 0) {
         return sender(res, { error: 'No body provided!' }, HTTP_CODE.BadRequest);
       }
@@ -68,8 +68,9 @@ export default function putReqHandler(
       //   pointer[key] = bodyData[key];
       // }
 
-      const hasError = writeFile(jsonPath, dataSrc as JSON);
-      if (hasError) {
+      try {
+        await fWriteFile(jsonPath, dataSrc);
+      } catch (e) {
         return sender(
           res,
           {

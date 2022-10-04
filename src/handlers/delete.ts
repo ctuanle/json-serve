@@ -1,9 +1,9 @@
 import { IncomingMessage, ServerResponse } from 'http';
-import { writeFile } from '../utils/_fs';
 import sender from '../utils/sender';
 import { HTTP_CODE } from '../utils/http_code';
+import { fWriteFile } from '../utils/file';
 
-export default function deleteReqHandler(
+export default async function deleteReqHandler(
   req: IncomingMessage,
   res: ServerResponse,
   dataSrc: { [key: string]: any },
@@ -87,8 +87,9 @@ export default function deleteReqHandler(
     delete pointer[keyToDel];
   }
 
-  const hasError = writeFile(jsonPath, dataSrc as JSON);
-  if (hasError) {
+  try {
+    await fWriteFile(jsonPath, dataSrc);
+  } catch (e) {
     return sender(
       res,
       {
