@@ -24,7 +24,7 @@ export default function getReqHandler(
     if (Array.isArray(pointer)) {
       const expectedIndex = Number(key);
 
-      if (expectedIndex && pointer[expectedIndex]) {
+      if ((expectedIndex || expectedIndex === 0) && pointer[expectedIndex]) {
         pointer = pointer[expectedIndex];
       } else {
         return sender(res, { error: 'Invalid path.' }, HTTP_CODE.NotFound);
@@ -55,6 +55,27 @@ export default function getReqHandler(
           return answer;
         }
       });
+    } else if (typeof pointer === 'object') {
+      const filtered: { [key: string]: any } = {};
+      console.log(pointer);
+
+      Object.keys(pointer).forEach((k) => {
+        let answer = true;
+        for (const field of queryFields) {
+          if (
+            !pointer[k] ||
+            !pointer[k][field] ||
+            (pointer[k][field] !== url.searchParams.get(field) &&
+              Number(pointer[k][field]) !== Number(url.searchParams.get(field)))
+          ) {
+            answer = false;
+            break;
+          }
+        }
+        if (answer) filtered[k] = pointer[k];
+      });
+
+      pointer = filtered;
     } else {
       return sender(
         res,
