@@ -18,7 +18,7 @@ export default function postReqHandler(
     keys.pop();
   }
   let pointer = dataSrc;
-  let newEndPath = '';
+  let newEndPath: number;
 
   for (let i = 0; i < keys.length; i++) {
     const key = keys[i];
@@ -26,7 +26,7 @@ export default function postReqHandler(
     if (Array.isArray(pointer)) {
       const expectedIndex = Number(key);
 
-      if (expectedIndex && pointer[expectedIndex]) {
+      if ((expectedIndex || expectedIndex === 0) && pointer[expectedIndex]) {
         pointer = pointer[expectedIndex];
       } else {
         return sender(res, { error: 'Invalid path.' }, HTTP_CODE.NotFound);
@@ -34,10 +34,12 @@ export default function postReqHandler(
     } else if (typeof pointer === 'object') {
       if (key in pointer) {
         pointer = pointer[key];
-      } else if (!(key in pointer) && i === keys.length - 1) {
-        newEndPath = key;
-        break;
-      } else {
+      }
+      // else if (!(key in pointer) && i === keys.length - 1) {
+      //   newEndPath = key;
+      //   break;
+      // }
+      else {
         return sender(res, { error: 'Invalid path!' }, HTTP_CODE.NotFound);
       }
     } else {
@@ -53,6 +55,10 @@ export default function postReqHandler(
     );
   }
 
+  if (!Array.isArray(pointer)) {
+    newEndPath = Math.max(...Object.keys(pointer).map((key) => Number(key))) + 1;
+  }
+
   req
     .on('error', (err) => console.log(err))
     .on('data', (chunk) => {
@@ -66,14 +72,15 @@ export default function postReqHandler(
       const bodyData = JSON.parse(Buffer.concat(chunks).toString());
 
       if (newEndPath) {
-        pointer[newEndPath] = [bodyData];
+        pointer[newEndPath] = bodyData;
       } else if (Array.isArray(pointer)) {
         pointer.push(bodyData);
-      } else {
-        for (let key of Object.keys(bodyData)) {
-          pointer[key] = bodyData[key];
-        }
       }
+      //  else {
+      //   for (let key of Object.keys(bodyData)) {
+      //     pointer[key] = bodyData[key];
+      //   }
+      // }
 
       try {
         await fWriteFile(jsonPath, dataSrc);

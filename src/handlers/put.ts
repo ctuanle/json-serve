@@ -26,7 +26,7 @@ export default function putReqHandler(
     if (Array.isArray(pointer)) {
       const expectedIndex = Number(key);
 
-      if (expectedIndex && pointer[expectedIndex]) {
+      if ((expectedIndex || expectedIndex === 0) && pointer[expectedIndex]) {
         pointer = pointer[expectedIndex];
       } else {
         return sender(res, { error: 'Invalid path.' }, HTTP_CODE.NotFound);

@@ -37,7 +37,7 @@ export default async function deleteReqHandler(
     if (Array.isArray(pointer)) {
       const expectedIndex = Number(key);
 
-      if (expectedIndex && pointer[expectedIndex]) {
+      if ((expectedIndex || expectedIndex === 0) && pointer[expectedIndex]) {
         pointer = pointer[expectedIndex];
       } else {
         return sender(res, { error: 'Invalid path.' }, HTTP_CODE.NotFound);
@@ -57,35 +57,36 @@ export default async function deleteReqHandler(
     return sender(res, { error: 'Invalid path.' }, HTTP_CODE.NotFound);
   }
 
-  const queryFields = Array.from(url.searchParams.keys());
+  // const queryFields = Array.from(url.searchParams.keys());
   // process search query if there is
-  if (queryFields.length > 0) {
-    if (Array.isArray(pointer[keyToDel])) {
-      // filtering
-      pointer[keyToDel] = pointer[keyToDel].filter((item: any) => {
-        let toDelete = true;
-        for (const field of queryFields) {
-          if (String(item[field]) === url.searchParams.get(field)) {
-            toDelete &&= false;
-          } else {
-            toDelete &&= true;
-            break;
-          }
-        }
-        return toDelete;
-      });
-    } else {
-      return sender(
-        res,
-        {
-          message: 'Delete with query is only supported with array data.',
-        },
-        HTTP_CODE.NotFound
-      );
-    }
-  } else {
-    delete pointer[keyToDel];
-  }
+  // if (queryFields.length > 0) {
+  //   if (Array.isArray(pointer[keyToDel])) {
+  //     // filtering
+  //     pointer[keyToDel] = pointer[keyToDel].filter((item: any) => {
+  //       let toDelete = true;
+  //       for (const field of queryFields) {
+  //         if (String(item[field]) === url.searchParams.get(field)) {
+  //           toDelete &&= false;
+  //         } else {
+  //           toDelete &&= true;
+  //           break;
+  //         }
+  //       }
+  //       return toDelete;
+  //     });
+  //   } else {
+  //     return sender(
+  //       res,
+  //       {
+  //         message: 'Delete with query is only supported with array data.',
+  //       },
+  //       HTTP_CODE.NotFound
+  //     );
+  //   }
+  // } else {
+  //   delete pointer[keyToDel];
+  // }
+  pointer[keyToDel] = null;
 
   try {
     await fWriteFile(jsonPath, dataSrc);
