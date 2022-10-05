@@ -1,6 +1,6 @@
 ## JSON-Serve
 
-By serving a json file as a rest api server, you can create a testing api within less than a minute with JSON-Serve.
+By serving a json file as a rest api server, you can create a testing rest-api within less than a minute with JSON-Serve.
 
 ### Note
 
@@ -48,26 +48,104 @@ With post request, you can update your json file and persist it.
 
 If the target resources is an array, received data will be pushed into the array.
 
-If the target resources is an normal object, string, number, ... it will be replaced by received data.
+If the target resources is an normal object, new key will be created (for now, it is a number that is calculated by add 1 to max value key) and attach to request body.
 
-If the target resources does not exist, it will be created if it ancestors already exist. For example:
+<!-- If the target resources does not exist, it will be created if it ancestors already exist. For example: -->
 
 ```json
 {
-  "C": {
-    "code": {
-      "projects": []
+  "method": [
+    {
+      "name": "GET"
+    },
+    {
+      "name": "POST"
     }
+  ],
+  "protocol": {
+    "1": "HTTP",
+    "2": "HTTPS"
   }
 }
 ```
 
-with above data, `POST /C/code/repos` or `POST /C/rom`, etc will be created. However, `POST C/exe/vscode` or `POST C/exo/vscode`, will return a `400 Bad request` response.
+<!-- with above data, `POST /C/code/repos` or `POST /C/rom`, etc will be created. However, `POST C/exe/vscode` or `POST C/exo/vscode`, will return a `400 Bad request` response. -->
+
+Ex: `POST /method` with body `{"name": "PUT"}` and `POST /protocol` with body `"TCP"` will turn above data into
+
+```json
+{
+  "method": [
+    {
+      "name": "GET"
+    },
+    {
+      "name": "POST"
+    },
+    {
+      "name": "PUT"
+    }
+  ],
+  "protocol": {
+    "1": "HTTP",
+    "2": "HTTPS",
+    "3": "TCP"
+  }
+}
+```
 
 Updated/Created data will be persisted into the json file and can be accessed using GET requests.
 
 Please note that if you edit json file manually while the server is running, edited data won't be seen by the server. In that case, restart the server.
 
+#### PUT
+
+`POST /protocol/0` with body `{"name": "PATCH"}` and `POST /protocol/3` with body `"UDP"` will turn above data into:
+
+```json
+{
+  "method": [
+    {
+      "name": "PATCH"
+    },
+    {
+      "name": "POST"
+    },
+    {
+      "name": "PUT"
+    }
+  ],
+  "protocol": {
+    "1": "HTTP",
+    "2": "HTTPS",
+    "3": "UDP"
+  }
+}
+```
+
 #### DELETE
 
-With DELETE requests, you can delete a specific data on your json file and persist it. With array data, query will help you filtering it.
+With DELETE requests, you can delete a specific data on your json file and persist it.
+
+<!-- With array data, query will help you filtering it. -->
+
+`DELETE /method/2` and `DELETE /protocol/3` will turn above data into:
+
+```json
+{
+  "method": [
+    {
+      "name": "PATCH"
+    },
+    {
+      "name": "POST"
+    },
+    null
+  ],
+  "protocol": {
+    "1": "HTTP",
+    "2": "HTTPS",
+    "3": null
+  }
+}
+```
