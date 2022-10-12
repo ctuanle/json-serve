@@ -18,7 +18,7 @@ export default function postReqHandler(
     keys.pop();
   }
   let pointer = dataSrc;
-  let newEndPath: number;
+  // let newEndPath: number;
 
   for (let i = 0; i < keys.length; i++) {
     const key = keys[i];
@@ -56,7 +56,15 @@ export default function postReqHandler(
   }
 
   if (!Array.isArray(pointer)) {
-    newEndPath = Math.max(...Object.keys(pointer).map((key) => Number(key))) + 1;
+    // newEndPath = Math.max(...Object.keys(pointer).map((key) => Number(key))) + 1;
+    return sender(
+      res,
+      {
+        error:
+          'Cannot post to this resources (given path). In strict mode, POST is only supported with array data.',
+      },
+      HTTP_CODE.BadRequest
+    );
   }
 
   req
@@ -70,12 +78,13 @@ export default function postReqHandler(
       }
       // eslint-disable-next-line no-undef
       const bodyData = JSON.parse(Buffer.concat(chunks).toString());
+      pointer.push(bodyData);
 
-      if (newEndPath) {
-        pointer[newEndPath] = bodyData;
-      } else if (Array.isArray(pointer)) {
-        pointer.push(bodyData);
-      }
+      // if (newEndPath) {
+      //   pointer[newEndPath] = bodyData;
+      // } else if (Array.isArray(pointer)) {
+      //   pointer.push(bodyData);
+      // }
       //  else {
       //   for (let key of Object.keys(bodyData)) {
       //     pointer[key] = bodyData[key];

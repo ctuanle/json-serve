@@ -13,23 +13,33 @@ export default async function deleteReqHandler(
 
   const keys = url.pathname.split('/').slice(1);
 
-  if (keys.length === 0) {
-    return sender(
-      res,
-      {
-        error:
-          'You are try to delete all your data. If this is what you wanted, please do it manually.',
-      },
-      HTTP_CODE.BadRequest
-    );
-  }
+  // if (keys.length === 0) {
+  //   return sender(
+  //     res,
+  //     {
+  //       error:
+  //         'You are try to delete all your data. If this is what you wanted, please do it manually.',
+  //     },
+  //     HTTP_CODE.BadRequest
+  //   );
+  // }
 
   if (keys.length > 0 && keys.at(-1) === '') {
     keys.pop();
   }
 
   let pointer = dataSrc;
-  const keyToDel = keys.at(-1) ?? '';
+  const keyToDel = Number(keys.at(-1) ?? '');
+
+  if (!keyToDel) {
+    return sender(
+      res,
+      {
+        error: 'Invalid index. Please specify a valid id/index point to data about to be deleted.',
+      },
+      HTTP_CODE.BadRequest
+    );
+  }
 
   for (let i = 0; i < keys.length - 1; i++) {
     const key = keys[i];
@@ -53,9 +63,20 @@ export default async function deleteReqHandler(
     }
   }
 
-  if (!(keyToDel in pointer)) {
-    return sender(res, { error: 'Invalid path.' }, HTTP_CODE.NotFound);
+  if (!Array.isArray(pointer)) {
+    return sender(
+      res,
+      {
+        error:
+          'Cannot delete this resources (given path). In strict mode, DELETE is only supported with array data.',
+      },
+      HTTP_CODE.BadRequest
+    );
   }
+
+  // if (!(keyToDel in pointer)) {
+  //   return sender(res, { error: 'Invalid index.' }, HTTP_CODE.NotFound);
+  // }
 
   // const queryFields = Array.from(url.searchParams.keys());
   // process search query if there is

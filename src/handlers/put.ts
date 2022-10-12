@@ -42,11 +42,14 @@ export default function putReqHandler(
     }
   }
 
-  if (typeof pointer !== 'object') {
+  if (!Array.isArray(pointer)) {
     return sender(
       res,
-      { error: 'Cannot post to this resources (given path).' },
-      HTTP_CODE.NotFound
+      {
+        error:
+          'Cannot put to this resources (given path). In strict mode, PUT is only supported with array data.',
+      },
+      HTTP_CODE.BadRequest
     );
   }
 

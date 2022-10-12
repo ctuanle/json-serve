@@ -7,6 +7,7 @@ import { fReadFile, fWriteFile } from './utils/file';
 import { USER_PLANET } from './utils/fake_data';
 import listener from './listener';
 
+// should use global objects to store options ?
 async function main() {
   const [, , ...args] = process.argv;
   console.log(args);
@@ -28,7 +29,7 @@ async function main() {
   );
 
   server.listen(port, () => {
-    console.log(`Serving ${jsonPath} on port ${port}`);
+    console.info(`Serving ${jsonPath} on port ${port}`);
   });
 }
 
