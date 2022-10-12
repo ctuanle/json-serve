@@ -27,16 +27,16 @@ export default function getReqHandler(
       if ((expectedIndex || expectedIndex === 0) && pointer[expectedIndex]) {
         pointer = pointer[expectedIndex];
       } else {
-        return sender(res, { error: 'Invalid path.' }, HTTP_CODE.NotFound);
+        return sender(res, req, { error: 'Invalid path.' }, HTTP_CODE.NotFound);
       }
     } else if (typeof pointer === 'object') {
       if (key in pointer) {
         pointer = pointer[key];
       } else {
-        return sender(res, { error: 'No resources matched given path.' }, HTTP_CODE.NotFound);
+        return sender(res, req, { error: 'No resources matched given path.' }, HTTP_CODE.NotFound);
       }
     } else {
-      return sender(res, { error: 'Invalid path!' }, HTTP_CODE.NotFound);
+      return sender(res, req, { error: 'Invalid path!' }, HTTP_CODE.NotFound);
     }
   }
 
@@ -79,6 +79,7 @@ export default function getReqHandler(
     } else {
       return sender(
         res,
+        req,
         {
           message: 'Query is not supported for this type of resources.',
         },
@@ -87,7 +88,7 @@ export default function getReqHandler(
     }
   }
   // send filtered data
-  return sender(res, {
+  return sender(res, req, {
     path: url.pathname,
     data: pointer,
   });

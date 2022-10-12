@@ -7,22 +7,35 @@ const COLOR = {
   yellow: '\x1b[33m', // OPTIONS (default)
 };
 
-export default function logger(method: string, url: string) {
+const statusCodeColor = (code: number) => {
+  switch (code) {
+    case 200:
+    case 201:
+    case 202:
+    case 204:
+      return COLOR.green;
+
+    default:
+      return COLOR.red;
+  }
+};
+
+export default function logger(method: string, code: number, url: string) {
   switch (method) {
     case 'GET':
-      console.log(`${COLOR.green}%s${COLOR.reset}`, method, url);
+      console.info(`${COLOR.green}%s ${statusCodeColor(code)}%s${COLOR.reset}`, method, code, url);
       break;
     case 'POST':
-      console.log(`${COLOR.cyan}%s${COLOR.reset}`, method, url);
+      console.info(`${COLOR.cyan}%s ${statusCodeColor(code)}%s${COLOR.reset}`, method, code, url);
       break;
     case 'PUT':
-      console.log(`${COLOR.blue}%s${COLOR.reset}`, method, url);
+      console.info(`${COLOR.blue}%s ${statusCodeColor(code)}%s${COLOR.reset}`, method, code, url);
       break;
     case 'DELETE':
-      console.log(`${COLOR.red}%s${COLOR.reset}`, method, url);
+      console.info(`${COLOR.red}%s ${statusCodeColor(code)}%s${COLOR.reset}`, method, code, url);
       break;
     default:
-      console.log(`${COLOR.yellow}%s${COLOR.reset}`, method, url);
+      console.info(`${COLOR.yellow}%s ${statusCodeColor(code)}%s${COLOR.reset}`, method, code, url);
       break;
   }
 }

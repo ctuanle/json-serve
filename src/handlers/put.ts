@@ -29,22 +29,23 @@ export default function putReqHandler(
       if ((expectedIndex || expectedIndex === 0) && pointer[expectedIndex]) {
         pointer = pointer[expectedIndex];
       } else {
-        return sender(res, { error: 'Invalid path.' }, HTTP_CODE.NotFound);
+        return sender(res, req, { error: 'Invalid path.' }, HTTP_CODE.NotFound);
       }
     } else if (typeof pointer === 'object') {
       if (key in pointer) {
         pointer = pointer[key];
       } else {
-        return sender(res, { error: 'No resources matched given path.' }, HTTP_CODE.NotFound);
+        return sender(res, req, { error: 'No resources matched given path.' }, HTTP_CODE.NotFound);
       }
     } else {
-      return sender(res, { error: 'Invalid path!' }, HTTP_CODE.NotFound);
+      return sender(res, req, { error: 'Invalid path!' }, HTTP_CODE.NotFound);
     }
   }
 
   if (!Array.isArray(pointer)) {
     return sender(
       res,
+      req,
       {
         error:
           'Cannot put to this resources (given path). In strict mode, PUT is only supported with array data.',
@@ -60,7 +61,7 @@ export default function putReqHandler(
     })
     .on('end', async () => {
       if (chunks.length === 0) {
-        return sender(res, { error: 'No body provided!' }, HTTP_CODE.BadRequest);
+        return sender(res, req, { error: 'No body provided!' }, HTTP_CODE.BadRequest);
       }
       // eslint-disable-next-line no-undef
       const bodyData = JSON.parse(Buffer.concat(chunks).toString());
@@ -76,6 +77,7 @@ export default function putReqHandler(
       } catch (e) {
         return sender(
           res,
+          req,
           {
             error: 'Could not persist. Something went wrong!',
           },
@@ -85,6 +87,7 @@ export default function putReqHandler(
 
       return sender(
         res,
+        req,
         {
           message: 'Persist data successfully.',
           path: url.pathname,

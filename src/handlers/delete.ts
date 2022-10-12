@@ -34,6 +34,7 @@ export default async function deleteReqHandler(
   if (!keyToDel) {
     return sender(
       res,
+      req,
       {
         error: 'Invalid index. Please specify a valid id/index point to data about to be deleted.',
       },
@@ -50,22 +51,23 @@ export default async function deleteReqHandler(
       if ((expectedIndex || expectedIndex === 0) && pointer[expectedIndex]) {
         pointer = pointer[expectedIndex];
       } else {
-        return sender(res, { error: 'Invalid path.' }, HTTP_CODE.NotFound);
+        return sender(res, req, { error: 'Invalid path.' }, HTTP_CODE.NotFound);
       }
     } else if (typeof pointer === 'object') {
       if (key in pointer) {
         pointer = pointer[key];
       } else {
-        return sender(res, { error: 'No resources matched given path.' }, HTTP_CODE.NotFound);
+        return sender(res, req, { error: 'No resources matched given path.' }, HTTP_CODE.NotFound);
       }
     } else {
-      return sender(res, { error: 'Invalid path!' }, HTTP_CODE.NotFound);
+      return sender(res, req, { error: 'Invalid path!' }, HTTP_CODE.NotFound);
     }
   }
 
   if (!Array.isArray(pointer)) {
     return sender(
       res,
+      req,
       {
         error:
           'Cannot delete this resources (given path). In strict mode, DELETE is only supported with array data.',
@@ -114,6 +116,7 @@ export default async function deleteReqHandler(
   } catch (e) {
     return sender(
       res,
+      req,
       {
         error: 'Could not persist. Something went wrong!',
       },
@@ -124,6 +127,7 @@ export default async function deleteReqHandler(
   // send filtered data
   return sender(
     res,
+    req,
     {
       path: url.pathname,
       message: 'Resources deleted.',

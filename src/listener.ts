@@ -1,6 +1,5 @@
 import { IncomingMessage, ServerResponse } from 'http';
 
-import logger from './utils/logger';
 import getReqHandler from './handlers/get';
 import postReqHandler from './handlers/post';
 import deleteReqHandler from './handlers/delete';
@@ -22,7 +21,6 @@ export default function ({ dataSrc, jsonPath, isNoStrict }: IListenerParams) {
     res.setHeader('Access-Control-Max-Age', '86400'); // one-day
 
     const method = req.method ?? '';
-    logger(method, req.url ?? '');
 
     if (method === 'OPTIONS') {
       res.writeHead(204);

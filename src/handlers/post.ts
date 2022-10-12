@@ -29,7 +29,7 @@ export default function postReqHandler(
       if ((expectedIndex || expectedIndex === 0) && pointer[expectedIndex]) {
         pointer = pointer[expectedIndex];
       } else {
-        return sender(res, { error: 'Invalid path.' }, HTTP_CODE.NotFound);
+        return sender(res, req, { error: 'Invalid path.' }, HTTP_CODE.NotFound);
       }
     } else if (typeof pointer === 'object') {
       if (key in pointer) {
@@ -40,18 +40,19 @@ export default function postReqHandler(
       //   break;
       // }
       else {
-        return sender(res, { error: 'Invalid path!' }, HTTP_CODE.NotFound);
+        return sender(res, req, { error: 'Invalid path!' }, HTTP_CODE.NotFound);
       }
     } else {
-      return sender(res, { error: 'Invalid path!' }, HTTP_CODE.NotFound);
+      return sender(res, req, { error: 'Invalid path!' }, HTTP_CODE.NotFound);
     }
   }
 
   if (typeof pointer !== 'object') {
     return sender(
       res,
+      req,
       { error: 'Cannot post to this resources (given path).' },
-      HTTP_CODE.NotFound
+      HTTP_CODE.BadRequest
     );
   }
 
@@ -59,6 +60,7 @@ export default function postReqHandler(
     // newEndPath = Math.max(...Object.keys(pointer).map((key) => Number(key))) + 1;
     return sender(
       res,
+      req,
       {
         error:
           'Cannot post to this resources (given path). In strict mode, POST is only supported with array data.',
@@ -74,7 +76,7 @@ export default function postReqHandler(
     })
     .on('end', async () => {
       if (chunks.length === 0) {
-        return sender(res, { error: 'No body provided!' }, HTTP_CODE.BadRequest);
+        return sender(res, req, { error: 'No body provided!' }, HTTP_CODE.BadRequest);
       }
       // eslint-disable-next-line no-undef
       const bodyData = JSON.parse(Buffer.concat(chunks).toString());
@@ -96,6 +98,7 @@ export default function postReqHandler(
       } catch (e) {
         return sender(
           res,
+          req,
           {
             error: 'Could not persist. Something went wrong!',
           },
@@ -105,6 +108,7 @@ export default function postReqHandler(
 
       return sender(
         res,
+        req,
         {
           message: 'Persist data successfully.',
           path: url.pathname,
