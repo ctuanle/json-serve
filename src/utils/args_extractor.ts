@@ -4,6 +4,7 @@ interface IEntryArgs {
   port: number;
   jsonPath: string;
   isNoStrict: boolean;
+  readonly: boolean;
 }
 
 export default function (args: string[]): IEntryArgs {
@@ -20,7 +21,9 @@ export default function (args: string[]): IEntryArgs {
 
     const isNoStrict = args.includes('--no-strict');
 
-    return { port: Number(port), jsonPath, isNoStrict };
+    const readonly = args.includes('--readonly');
+
+    return { port: Number(port), jsonPath, isNoStrict, readonly };
   } catch (e: any) {
     console.error(e.message);
     process.exit(e.message);

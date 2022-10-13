@@ -4,15 +4,18 @@ import getReqHandler from './handlers/get';
 import postReqHandler from './handlers/post';
 import deleteReqHandler from './handlers/delete';
 import putReqHandler from './handlers/put';
+import sender from './utils/sender';
+import { HTTP_CODE } from './utils/http_code';
 
 export interface IListenerParams {
   dataSrc: { [key: string]: any };
   jsonPath: string;
   isNoStrict: boolean;
+  readonly: boolean;
 }
 
 // function that return a request listener function
-export default function ({ dataSrc, jsonPath, isNoStrict }: IListenerParams) {
+export default function ({ dataSrc, jsonPath, isNoStrict, readonly }: IListenerParams) {
   console.info(isNoStrict);
   return function (req: IncomingMessage, res: ServerResponse) {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -22,7 +25,14 @@ export default function ({ dataSrc, jsonPath, isNoStrict }: IListenerParams) {
 
     const method = req.method ?? '';
 
-    if (method === 'OPTIONS') {
+    if (readonly && !['GET', 'OPTIONS'].includes(method)) {
+      return sender(
+        res,
+        req,
+        { error: 'Only GET and OPTIONS requests are allowed' },
+        HTTP_CODE.BadRequest
+      );
+    } else if (method === 'OPTIONS') {
       res.writeHead(204);
       return res.end();
     } else if (method === 'GET') {
