@@ -5,6 +5,7 @@ interface IEntryArgs {
   jsonPath: string;
   isNoStrict: boolean;
   readonly: boolean;
+  persist: boolean;
 }
 
 export default function (args: string[]): IEntryArgs {
@@ -20,10 +21,10 @@ export default function (args: string[]): IEntryArgs {
     if (!Number(port)) throw new Error('Invalid port!');
 
     const isNoStrict = args.includes('--no-strict');
-
     const readonly = args.includes('--readonly');
+    const persist = args.includes('--persist');
 
-    return { port: Number(port), jsonPath, isNoStrict, readonly };
+    return { port: Number(port), jsonPath, isNoStrict, readonly, persist };
   } catch (e: any) {
     console.error(e.message);
     process.exit(e.message);

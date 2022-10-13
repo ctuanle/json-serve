@@ -7,7 +7,8 @@ export default function postReqHandler(
   req: IncomingMessage,
   res: ServerResponse,
   dataSrc: { [key: string]: any },
-  jsonPath: string
+  jsonPath: string,
+  persist: boolean
 ) {
   const url = new URL(req.url ?? '', `http://${req.headers.host}`);
   const chunks: any = [];
@@ -93,17 +94,19 @@ export default function postReqHandler(
       //   }
       // }
 
-      try {
-        await fWriteFile(jsonPath, dataSrc);
-      } catch (e) {
-        return sender(
-          res,
-          req,
-          {
-            error: 'Could not persist. Something went wrong!',
-          },
-          HTTP_CODE.InternalServerError
-        );
+      if (persist) {
+        try {
+          await fWriteFile(jsonPath, dataSrc);
+        } catch (e) {
+          return sender(
+            res,
+            req,
+            {
+              error: 'Could not persist. Something went wrong!',
+            },
+            HTTP_CODE.InternalServerError
+          );
+        }
       }
 
       return sender(

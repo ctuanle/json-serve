@@ -12,10 +12,11 @@ export interface IListenerParams {
   jsonPath: string;
   isNoStrict: boolean;
   readonly: boolean;
+  persist: boolean;
 }
 
 // function that return a request listener function
-export default function ({ dataSrc, jsonPath, isNoStrict, readonly }: IListenerParams) {
+export default function ({ dataSrc, jsonPath, isNoStrict, readonly, persist }: IListenerParams) {
   console.info(isNoStrict);
   return function (req: IncomingMessage, res: ServerResponse) {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -38,11 +39,11 @@ export default function ({ dataSrc, jsonPath, isNoStrict, readonly }: IListenerP
     } else if (method === 'GET') {
       return getReqHandler(req, res, dataSrc);
     } else if (method === 'POST') {
-      return postReqHandler(req, res, dataSrc, jsonPath);
+      return postReqHandler(req, res, dataSrc, jsonPath, persist);
     } else if (method === 'DELETE') {
-      return deleteReqHandler(req, res, dataSrc, jsonPath);
+      return deleteReqHandler(req, res, dataSrc, jsonPath, persist);
     } else if (method === 'PUT') {
-      return putReqHandler(req, res, dataSrc, jsonPath);
+      return putReqHandler(req, res, dataSrc, jsonPath, persist);
     }
   };
 }

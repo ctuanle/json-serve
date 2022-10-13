@@ -11,7 +11,7 @@ import listener from './listener';
 async function main() {
   const [, , ...args] = process.argv;
   console.log(args);
-  const { port, jsonPath, isNoStrict, readonly } = argsExtractor(args);
+  const { port, jsonPath, isNoStrict, readonly, persist } = argsExtractor(args);
 
   const jsonData = await fReadFile(jsonPath);
 
@@ -26,6 +26,7 @@ async function main() {
       jsonPath,
       isNoStrict,
       readonly,
+      persist,
     })
   );
 
