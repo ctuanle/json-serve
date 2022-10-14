@@ -52,12 +52,11 @@ export default function getReqHandler(
             answer = false;
             break;
           }
-          return answer;
         }
+        return answer;
       });
     } else if (typeof pointer === 'object') {
       const filtered: { [key: string]: any } = {};
-      console.log(pointer);
 
       Object.keys(pointer).forEach((k) => {
         let answer = true;
