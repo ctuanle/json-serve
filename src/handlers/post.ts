@@ -8,7 +8,8 @@ export default function postReqHandler(
   res: ServerResponse,
   dataSrc: { [key: string]: any },
   jsonPath: string,
-  persist: boolean
+  persist: boolean,
+  isStrict: boolean
 ) {
   const url = new URL(req.url ?? '', `http://${req.headers.host}`);
   const chunks: any = [];
@@ -59,15 +60,27 @@ export default function postReqHandler(
 
   if (!Array.isArray(pointer)) {
     // newEndPath = Math.max(...Object.keys(pointer).map((key) => Number(key))) + 1;
-    return sender(
-      res,
-      req,
-      {
-        error:
-          'Cannot post to this resources (given path). In strict mode, POST is only supported with array data.',
-      },
-      HTTP_CODE.BadRequest
-    );
+    if (isStrict) {
+      return sender(
+        res,
+        req,
+        {
+          error:
+            'Cannot post to this resources (given path). In strict mode, can only POST data to array.',
+        },
+        HTTP_CODE.BadRequest
+      );
+    } else {
+      return sender(
+        res,
+        req,
+        {
+          error:
+            'Cannot post to this resources (given path). If this is what you wanted to do, please use PUT instead. With the path that contains a new key for body data.',
+        },
+        HTTP_CODE.BadRequest
+      );
+    }
   }
 
   req
@@ -81,6 +94,16 @@ export default function postReqHandler(
       }
       // eslint-disable-next-line no-undef
       const bodyData = JSON.parse(Buffer.concat(chunks).toString());
+
+      if (!bodyData || (typeof bodyData === 'object' && Object.keys(bodyData).length === 0)) {
+        return sender(
+          res,
+          req,
+          { error: 'Please provide a valid body data!' },
+          HTTP_CODE.BadRequest
+        );
+      }
+
       pointer.push(bodyData);
 
       // if (newEndPath) {
@@ -113,7 +136,7 @@ export default function postReqHandler(
         res,
         req,
         {
-          message: 'Persist data successfully.',
+          message: 'Data added successfully.',
           path: url.pathname,
         },
         HTTP_CODE.Created

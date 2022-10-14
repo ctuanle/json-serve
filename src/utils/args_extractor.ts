@@ -3,7 +3,7 @@ import process from 'process';
 interface IEntryArgs {
   port: number;
   jsonPath: string;
-  isNoStrict: boolean;
+  isStrict: boolean;
   readonly: boolean;
   persist: boolean;
 }
@@ -20,11 +20,11 @@ export default function (args: string[]): IEntryArgs {
 
     if (!Number(port)) throw new Error('Invalid port!');
 
-    const isNoStrict = args.includes('--no-strict');
+    const isStrict = !args.includes('--no-strict');
     const readonly = args.includes('--readonly');
     const persist = args.includes('--persist');
 
-    return { port: Number(port), jsonPath, isNoStrict, readonly, persist };
+    return { port: Number(port), jsonPath, isStrict, readonly, persist };
   } catch (e: any) {
     console.error(e.message);
     process.exit(e.message);

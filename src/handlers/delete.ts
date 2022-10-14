@@ -8,7 +8,8 @@ export default async function deleteReqHandler(
   res: ServerResponse,
   dataSrc: { [key: string]: any },
   jsonPath: string,
-  persist: boolean
+  persist: boolean,
+  isStrict: boolean
 ) {
   const url = new URL(req.url ?? '', `http://${req.headers.host}`);
 
@@ -30,7 +31,7 @@ export default async function deleteReqHandler(
   }
 
   let pointer = dataSrc;
-  const keyToDel = Number(keys.at(-1) ?? '');
+  const keyToDel = keys.at(-1) ?? '';
 
   if (!keyToDel) {
     return sender(
@@ -65,21 +66,28 @@ export default async function deleteReqHandler(
     }
   }
 
-  if (!Array.isArray(pointer)) {
-    return sender(
-      res,
-      req,
-      {
-        error:
-          'Cannot delete this resources (given path). In strict mode, DELETE is only supported with array data.',
-      },
-      HTTP_CODE.BadRequest
-    );
-  }
+  if (isStrict) {
+    if (!Array.isArray(pointer)) {
+      return sender(
+        res,
+        req,
+        {
+          error:
+            'Cannot delete this resources (given path). In strict mode, only DELETE array element is supported.',
+        },
+        HTTP_CODE.BadRequest
+      );
+    }
 
-  // if (!(keyToDel in pointer)) {
-  //   return sender(res, { error: 'Invalid index.' }, HTTP_CODE.NotFound);
-  // }
+    if (keyToDel in pointer) pointer[Number(keyToDel)] = null;
+    return sender(res, req, { error: 'Invalid index/id.' }, HTTP_CODE.BadRequest);
+  } else {
+    if (!(keyToDel in pointer)) {
+      return sender(res, req, { error: 'Invalid index.' }, HTTP_CODE.NotFound);
+    }
+
+    delete pointer[keyToDel];
+  }
 
   // const queryFields = Array.from(url.searchParams.keys());
   // process search query if there is
@@ -110,7 +118,6 @@ export default async function deleteReqHandler(
   // } else {
   //   delete pointer[keyToDel];
   // }
-  pointer[keyToDel] = null;
 
   if (persist) {
     try {

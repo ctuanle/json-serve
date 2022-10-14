@@ -11,7 +11,7 @@ import listener from './listener';
 async function main() {
   const [, , ...args] = process.argv;
   console.log(args);
-  const { port, jsonPath, isNoStrict, readonly, persist } = argsExtractor(args);
+  const { port, jsonPath, isStrict, readonly, persist } = argsExtractor(args);
 
   const jsonData = await fReadFile(jsonPath);
 
@@ -24,7 +24,7 @@ async function main() {
     listener({
       dataSrc: jsonData ?? USER_PLANET,
       jsonPath,
-      isNoStrict,
+      isStrict,
       readonly,
       persist,
     })

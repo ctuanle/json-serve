@@ -8,7 +8,8 @@ export default function putReqHandler(
   res: ServerResponse,
   dataSrc: { [key: string]: any },
   jsonPath: string,
-  persist: boolean
+  persist: boolean,
+  isStrict: boolean
 ) {
   const url = new URL(req.url ?? '', `http://${req.headers.host}`);
   const chunks: any = [];
@@ -43,13 +44,13 @@ export default function putReqHandler(
     }
   }
 
-  if (!Array.isArray(pointer)) {
+  if (isStrict && !Array.isArray(pointer)) {
     return sender(
       res,
       req,
       {
         error:
-          'Cannot put to this resources (given path). In strict mode, PUT is only supported with array data.',
+          'Cannot put to this resources (given path). In strict mode, can only PUT to update array element.',
       },
       HTTP_CODE.BadRequest
     );
@@ -67,11 +68,6 @@ export default function putReqHandler(
       // eslint-disable-next-line no-undef
       const bodyData = JSON.parse(Buffer.concat(chunks).toString());
       pointer[keyToUpdate] = bodyData;
-
-      // for (let key of Object.keys(pointer)) delete pointer[key];
-      // for (let key of Object.keys(bodyData)) {
-      //   pointer[key] = bodyData[key];
-      // }
 
       if (persist) {
         try {
@@ -92,7 +88,7 @@ export default function putReqHandler(
         res,
         req,
         {
-          message: 'Persist data successfully.',
+          message: 'Update data successfully.',
           path: url.pathname,
         },
         HTTP_CODE.NoContent
