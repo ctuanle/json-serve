@@ -1,56 +1,72 @@
 ## JSON-Serve
 
-By serving a json file as a rest api server, you can create a testing rest-api within less than a minute with JSON-Serve.
+Lightweight, simple yet fast and useful tool that help you create a fake rest-api for your frontend by serving a json file.
 
-### Note
-
-Inspired by this awesome package [typicode/json-server](https://github.com/typicode/json-server), I would like to create one by myself, with no dependency.
-
-### Usage
-
-Install locally (i will publish this package on npm in the future) and use it to server a json file on a specific port.
-
-First, clone this repo and run these commands:
+## Installation
 
 ```shell
-yarn
-yarn install:local
-yarn json-serve [json-file] [port]
+yarn add @ctuanle/json-serve --dev
+or
+npm install @ctuanle/json-serve --save-dev
 ```
 
-#### GET
+## Usage
 
-You can get any resources that exists in your json file by given it's path. For example:
-
-```json
-{
-  "method": [
-    {
-      "name": "GET"
-    },
-    {
-      "name": "POST"
-    }
-  ],
-  "protocol": "HTTP"
-}
+```shell
+yarn jss [json-path] [port] [other-options]
 ```
 
-To get "protocol", you can go with `GET /protocol`.
+| Options     | Required |  Default  | Description                 |
+| :---------- | :------: | :-------: | :-------------------------- |
+| json-path   |    no    | data.json | Path to your json file      |
+| port        |    no    |   3000    | Port on which server run    |
+| --no-strict |    no    |   false   | Turn on node-strict mode    |
+| --readonly  |    no    |   false   | Turn on readonly mode       |
+| --persist   |    no    |   false   | Turn on save-change-to-disk |
 
-Or to get all methods, go with `GET /method`.
+### Available methods
 
-Plus, with array data, you can filter it with query, for example, to get all method that name is "GET", `GET /method?name=GET`
+- GET
+- POST
+- PUT
+- DELETE
+- OPTIONS
 
-#### POST
+### No-strict mode
 
-With post request, you can update your json file and persist it.
+By default, you can only post/put/delete to array data. But in no-strict mode, these action are allowed with object type.
 
-If the target resources is an array, received data will be pushed into the array.
+### Read-only mode
 
-If the target resources is an normal object, new key will be created (for now, it is a number that is calculated by add 1 to max value key) and attach to request body.
+In this mode, only GET requests are allowed. Default is false.
 
-<!-- If the target resources does not exist, it will be created if it ancestors already exist. For example: -->
+### Persist
+
+Save changes created by POST/PUT/DELETE to your json file. Default is false, so changes are keep only on memory and will be deleted when you turn server off.
+
+### Example
+
+You've create a data.json file:
+
+```shell
+yarn jss data.json 3000
+```
+
+Or if you don't specify a path, a promt will appear and ask you if you want to create one:
+
+```shell
+yarn jss
+```
+
+You want to serve your json file and persist change:
+
+```shell
+yarn jss data.json 3000 --persist
+```
+
+## Details
+
+If your json file contains this content:
 
 ```json
 {
@@ -64,14 +80,35 @@ If the target resources is an normal object, new key will be created (for now, i
   ],
   "protocol": {
     "1": "HTTP",
-    "2": "HTTPS"
+    "2": "UDP"
   }
 }
 ```
 
-<!-- with above data, `POST /C/code/repos` or `POST /C/rom`, etc will be created. However, `POST C/exe/vscode` or `POST C/exo/vscode`, will return a `400 Bad request` response. -->
+All available routes are:
 
-Ex: `POST /method` with body `{"name": "PUT"}` and `POST /protocol` with body `"TCP"` will turn above data into
+```ts
+/method
+/method/[index]
+/protocol
+/protocol/[index]
+```
+
+### GET
+
+To get "protocol", you can go with `GET /protocol`.
+
+Or to get all methods, go with `GET /method`.
+
+Plus, with array data, you can filter it with query, for example, to get all method that name is "GET", `GET /method?name=GET`
+
+### POST
+
+With post request, you can update your json file and persist it.
+
+If the target resources is an array, received data will be pushed into the array.
+
+Ex: `POST /method` with body `{"name": "PUT"}` will turn above data into
 
 ```json
 {
@@ -88,19 +125,16 @@ Ex: `POST /method` with body `{"name": "PUT"}` and `POST /protocol` with body `"
   ],
   "protocol": {
     "1": "HTTP",
-    "2": "HTTPS",
-    "3": "TCP"
+    "2": "UDP"
   }
 }
 ```
 
-Updated/Created data will be persisted into the json file and can be accessed using GET requests.
-
 Please note that if you edit json file manually while the server is running, edited data won't be seen by the server. In that case, restart the server.
 
-#### PUT
+### PUT
 
-`POST /protocol/0` with body `{"name": "PATCH"}` and `POST /protocol/3` with body `"UDP"` will turn above data into:
+`PUT /protocol/0` with body `{"name": "PATCH"}` and `PUT /protocol/2` with body `"TCP"` will turn above data into:
 
 ```json
 {
@@ -117,19 +151,16 @@ Please note that if you edit json file manually while the server is running, edi
   ],
   "protocol": {
     "1": "HTTP",
-    "2": "HTTPS",
-    "3": "UDP"
+    "2": "TCP"
   }
 }
 ```
 
 #### DELETE
 
-With DELETE requests, you can delete a specific data on your json file and persist it.
+With DELETE requests, you can delete a specific data.
 
-<!-- With array data, query will help you filtering it. -->
-
-`DELETE /method/2` and `DELETE /protocol/3` will turn above data into:
+`DELETE /method/2` and `DELETE /protocol/2` will turn above data into:
 
 ```json
 {
@@ -144,8 +175,17 @@ With DELETE requests, you can delete a specific data on your json file and persi
   ],
   "protocol": {
     "1": "HTTP",
-    "2": "HTTPS",
-    "3": null
+    "2": null
   }
 }
 ```
+
+## Screenshots
+
+Colorful console logging:
+
+![Logging Console](./public/console.png 'Logging console')
+
+Sample response:
+
+![Server response](./public/sample.png 'Sample response')
