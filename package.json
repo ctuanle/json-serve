@@ -1,28 +1,36 @@
 {
-  "name": "json-serve",
+  "name": "@ctuanle/json-serve",
   "version": "1.0.0",
-  "description": "Simple json server",
+  "description": "Light, simple yet fast and useful tool for creating fake rest api.",
   "keywords": [
     "rest",
     "api",
     "json"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:ctuanle/json-serve.git"
+  },
   "author": "ctuanle",
   "license": "MIT",
   "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
   "bin": {
-    "json-serve": "dist/index.js"
+    "jss": "dist/index.js"
   },
   "scripts": {
     "start": "node .",
     "build": "tsc",
     "build:watch": "tsc --watch",
     "dev": "nodemon",
-    "install:local": "yarn build && yarn remove json-serve --silent && yarn add --dev file:./",
+    "install:local": "yarn build && yarn remove @ctuanle/json-serve --silent && yarn add --dev file:./",
     "prepare": "husky install"
   },
   "dependencies": {},
   "devDependencies": {
+    "@ctuanle/json-serve": "file:./",
     "@types/express": "^4.17.13",
     "@types/node": "^18.0.3",
     "@typescript-eslint/eslint-plugin": "^5.30.5",
@@ -31,7 +39,6 @@
     "eslint-config-airbnb-typescript": "^17.0.0",
     "eslint-config-prettier": "^8.5.0",
     "husky": "^8.0.1",
-    "json-serve": "file:./",
     "lint-staged": "^13.0.3",
     "nodemon": "^2.0.19",
     "prettier": "^2.7.1",
