@@ -17,7 +17,6 @@ export interface IListenerParams {
 
 // function that return a request listener function
 export default function ({ dataSrc, jsonPath, isStrict, readonly, persist }: IListenerParams) {
-  console.info(isStrict);
   return function (req: IncomingMessage, res: ServerResponse) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,POST,PUT,DELETE');
