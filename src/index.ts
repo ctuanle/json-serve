@@ -4,7 +4,7 @@ import http from 'http';
 
 import argsExtractor from './utils/args_extractor';
 import { fReadFile, fWriteFile } from './utils/file';
-import { USER_PLANET } from './utils/fake_data';
+import { SAMPLE_STORE } from './utils/fake_data';
 import listener from './listener';
 
 // should use global objects to store options ?
@@ -18,11 +18,11 @@ async function main() {
   if (!jsonData) {
     console.log('Invalid path file or file does not exist!');
     // console.log('Do you want to create a sample data.json file ?');
-    await fWriteFile('data.json', USER_PLANET);
+    await fWriteFile('data.json', SAMPLE_STORE);
   }
   const server = http.createServer(
     listener({
-      dataSrc: jsonData ?? USER_PLANET,
+      dataSrc: jsonData ?? SAMPLE_STORE,
       jsonPath,
       isStrict,
       readonly,
