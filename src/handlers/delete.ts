@@ -80,7 +80,7 @@ export default async function deleteReqHandler(
     }
 
     if (keyToDel in pointer) pointer[Number(keyToDel)] = null;
-    return sender(res, req, { error: 'Invalid index/id.' }, HTTP_CODE.BadRequest);
+    else return sender(res, req, { error: 'Invalid index/id.' }, HTTP_CODE.BadRequest);
   } else {
     if (!(keyToDel in pointer)) {
       return sender(res, req, { error: 'Invalid index.' }, HTTP_CODE.NotFound);
