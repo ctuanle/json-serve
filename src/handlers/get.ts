@@ -46,32 +46,28 @@ export default function getReqHandler(
     if (Array.isArray(pointer)) {
       // filtering
       pointer = pointer.filter((item) => {
-        let answer = true;
-        for (const field of queryFields) {
-          if (String(item[field]) !== url.searchParams.get(field)) {
-            answer = false;
-            break;
-          }
-        }
-        return answer;
+        return queryFields.every((field) => {
+          return (
+            item[field] === url.searchParams.get(field) ||
+            item[field] === Number(url.searchParams.get(field))
+          );
+        });
       });
     } else if (typeof pointer === 'object') {
       const filtered: { [key: string]: any } = {};
 
       Object.keys(pointer).forEach((k) => {
-        let answer = true;
-        for (const field of queryFields) {
+        const good = queryFields.every((field) => {
           if (
             !pointer[k] ||
             !pointer[k][field] ||
             (pointer[k][field] !== url.searchParams.get(field) &&
               Number(pointer[k][field]) !== Number(url.searchParams.get(field)))
-          ) {
-            answer = false;
-            break;
-          }
-        }
-        if (answer) filtered[k] = pointer[k];
+          )
+            return false;
+          return true;
+        });
+        if (good) filtered[k] = pointer[k];
       });
 
       pointer = filtered;
