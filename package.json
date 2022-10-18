@@ -1,6 +1,6 @@
 {
   "name": "@ctuanle/json-serve",
-  "version": "1.0.0",
+  "version": "1.0.1-beta",
   "description": "Light, simple yet fast and useful tool for creating fake rest api.",
   "keywords": [
     "rest",
