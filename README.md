@@ -20,7 +20,7 @@ yarn jss [json-path] [port] [other-options]
 | :---------- | :------: | :-------: | :-------------------------- |
 | json-path   |    no    | data.json | Path to your json file      |
 | port        |    no    |   3000    | Port on which server run    |
-| --no-strict |    no    |   false   | Turn on node-strict mode    |
+| --no-strict |    no    |   false   | Turn on no-strict mode    |
 | --readonly  |    no    |   false   | Turn on readonly mode       |
 | --persist   |    no    |   false   | Turn on save-change-to-disk |
 
@@ -34,7 +34,7 @@ yarn jss [json-path] [port] [other-options]
 
 ### No-strict mode
 
-By default, you can only post/put/delete to array data. But in no-strict mode, these action are allowed with object type.
+By default, you can only post/put/delete to array data. But in no-strict mode, these action are allowed with object type (key-value).
 
 ### Read-only mode
 
@@ -42,7 +42,7 @@ In this mode, only GET requests are allowed. Default is false.
 
 ### Persist
 
-Save changes created by POST/PUT/DELETE to your json file. Default is false, so changes are keep only on memory and will be deleted when you turn server off.
+Save changes created by POST/PUT/DELETE to your json file. Default is false, so changes are kept only on memory and will be deleted when you turn server off.
 
 ### Example
 
@@ -52,13 +52,13 @@ You've create a data.json file:
 yarn jss data.json 3000
 ```
 
-Or if you don't specify a path, a promt will appear and ask you if you want to create one:
+Or if you're too lazy and you don't specify a path, a promt will appear and ask you if you want to create one wiht pre-defined data for you:
 
 ```shell
 yarn jss
 ```
 
-You want to serve your json file and persist change:
+You want to serve your json file and persist changes:
 
 ```shell
 yarn jss data.json 3000 --persist
@@ -104,7 +104,7 @@ Plus, with array data, you can filter it with query, for example, to get all met
 
 ### POST
 
-With post request, you can update your json file and persist it.
+With post request, you can update your json file.
 
 If the target resources is an array, received data will be pushed into the array.
 
