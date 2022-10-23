@@ -46,6 +46,7 @@ export default function getReqHandler(
     if (Array.isArray(pointer)) {
       // filtering
       pointer = pointer.filter((item) => {
+        if (!item) return false;
         return queryFields.every((field) => {
           return (
             item[field] === url.searchParams.get(field) ||
