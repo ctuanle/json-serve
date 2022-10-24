@@ -9,7 +9,7 @@ dist
 
 # dummy data
 src/data
-data.json
+/data.json
 
 # dev
 .vscode

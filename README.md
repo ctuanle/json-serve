@@ -10,6 +10,14 @@ or
 npm install @ctuanle/json-serve --save-dev
 ```
 
+## Demo
+
+A simple demo on [fly.io](https://fly.io/). Here is the base api of my demo:
+
+```shell
+https://jss-demo.fly.dev/
+```
+
 ## Usage
 
 ```shell
@@ -20,7 +28,7 @@ yarn jss [json-path] [port] [other-options]
 | :---------- | :------: | :-------: | :-------------------------- |
 | json-path   |    no    | data.json | Path to your json file      |
 | port        |    no    |   3000    | Port on which server run    |
-| --no-strict |    no    |   false   | Turn on no-strict mode    |
+| --no-strict |    no    |   false   | Turn on no-strict mode      |
 | --readonly  |    no    |   false   | Turn on readonly mode       |
 | --persist   |    no    |   false   | Turn on save-change-to-disk |
 
