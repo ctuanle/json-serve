@@ -12,7 +12,11 @@ jss data.json 3000 --readonly
 
 Just that and I have an useful rest api here [jss-demo.fly.dev](https://jss-demo.fly.dev/) on [fly.io](https://fly.io/)
 
-# API
+## Data sources
+
+The data in the json file is not my own data but from [World Meters](https://www.worldometers.info/) on 24 October 2022.
+
+## API
 
 Base URL:
 

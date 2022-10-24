@@ -6,13 +6,17 @@ Lightweight, simple yet fast and useful tool that help you create a fake rest-ap
 
 ```shell
 yarn add @ctuanle/json-serve --dev
+```
+
 or
+
+```shell
 npm install @ctuanle/json-serve --save-dev
 ```
 
 ## Demo
 
-A simple demo on [fly.io](https://fly.io/). Here is the base api of my demo:
+A [simple demo](./demo) on [fly.io](https://fly.io/). Here is the base api of my demo:
 
 ```shell
 https://jss-demo.fly.dev/
@@ -60,7 +64,7 @@ You've create a data.json file:
 yarn jss data.json 3000
 ```
 
-Or if you're too lazy and you don't specify a path, a promt will appear and ask you if you want to create one wiht pre-defined data for you:
+Or if you're too lazy and you don't specify a path, a prompt will appear and ask you if you want to create one with pre-defined data for you:
 
 ```shell
 yarn jss
